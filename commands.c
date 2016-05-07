@@ -63,32 +63,45 @@ void commandDisplay(TelephoneBookList * list)
 {
     TelephoneBookNode * node = list->head;
 
-    int i, largeX, nameSpace;
-    
-    largeX = largestName(list);
+    int i;
+    int largeName, nameSpace;
+    int largeSerial, serialSpace;
 
-    FORMAT;
-    printf("%s %3s %s ", SUBBREAK, "Pos", SUBBREAK);
-    printf("%3s %s", "Serial", SUBBREAK);
-    printf(" %s %2s", "ID", SUBBREAK);
-    printf(" %s %*s", "Name", largeX - 3, SUBBREAK);
-    printf("%10s %s\n", "Telephone", SUBBREAK);
-    FORMAT;
-    for(i = 0; i < list->size; i++)
+    if(list->size == 0)
     {
-        if(list->size == 0)
-        {
-            printf("%s %46s", SUBBREAK, SUBBREAK);
-        }
-        if(i > 0)
-        {
-            nameSpace = largeX - strlen(node->name) + 1 ;
-            printf("%s %5s %d %6s %d %s %s %*s %s %s\n", SUBBREAK, SUBBREAK, i, SUBBREAK, node->id, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
-            node = node->nextNode;
-        }
-    }    
+        largeName = 0;
+        largeSerial = 0;
+    }
+    else
+    {
+        largeSerial = largestSerial(list->size);
+        largeName = largestName(list);
+    }
     FORMAT;
-    printf("| Total phone book entries: %d %15s\n", list->size, SUBBREAK);
+    printf("%s %s %s", SUBBREAK, "Pos", SUBBREAK);
+    printf(" %*s %s", largeSerial, "Serial", SUBBREAK);
+    printf(" %s %s", "ID", SUBBREAK);
+    printf(" %s %s", "Name", SUBBREAK);
+    printf(" %s %s\n", "Telephone", SUBBREAK);
+    FORMAT;
+    if(list->size == 0)
+    {
+        printf("%s %44s\n", SUBBREAK, SUBBREAK);       
+    }
+    else
+    {
+        for(i = 0; i < list->size; i++)
+        {
+            if(i > 0)
+            {
+                nameSpace = largeName - strlen(node->name) + 1 ;
+                printf("%s %5s %d %*s%d%s%s%s%s%s\n", SUBBREAK, SUBBREAK, i, largeSerial, SUBBREAK, node->id, SUBBREAK, node->name, SUBBREAK, node->telephone, SUBBREAK);
+                node = node->nextNode;
+            }
+        }    
+    }
+    FORMAT;
+    printf("| Total phone book entries: %d %16s\n", list->size, SUBBREAK);
     FORMAT;
 }
 
@@ -171,4 +184,24 @@ int largestName(TelephoneBookList * list)
         node = node->nextNode;
     }
     return largeX;
+}
+
+int largestSerial(int x)
+{
+    int largeSerial;
+
+    if(x > 0 && x < 9)
+    {
+        largeSerial = 1;
+    }
+    else if(x > 9 && x < 99)
+    {
+        largeSerial = 2;
+    }
+    else if(x > 99 && x < 999)
+    {
+        largeSerial = 3;
+    }
+
+    return largeSerial;
 }
