@@ -32,4 +32,5 @@ void commandSortName(TelephoneBookList * list);
 void commandSortRandom(TelephoneBookList * list);
 
 int largestName(TelephoneBookList * list);
+int largestSerial(int x);
 #endif
