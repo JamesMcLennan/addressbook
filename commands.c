@@ -65,7 +65,7 @@ void commandDisplay(TelephoneBookList * list)
 
     int i;
     int largeName, nameSpace;
-    int largeSerial, serialSpace;
+    int largeSerial, serialSpace; 
 
     if(list->size == 0)
     {
@@ -76,6 +76,7 @@ void commandDisplay(TelephoneBookList * list)
     {
         largeSerial = largestSerial(list->size);
         largeName = largestName(list);
+        serialSpace = largeSerial;
     }
     FORMAT;
     printf("%s %s %s", SUBBREAK, "Pos", SUBBREAK);
@@ -90,12 +91,30 @@ void commandDisplay(TelephoneBookList * list)
     }
     else
     {
-        for(i = 0; i < list->size; i++)
+        for(i = 0; i < list->size; i++) /*Calculations for finding the list size. Export into a separate functions + name and allocate variables for largestSerial();*/
         {
+            if(largeSerial == 7)
+            {
+                if(i > 9 && i < 99)
+                {
+                    serialSpace = largeSerial - 1;
+                }
+            }
+            if(largeSerial == 8)
+            { 
+                if(i > 9 && i < 99)
+                {
+                    serialSpace = largeSerial - 1;
+                }
+                if(i > 99 && i < 999)
+                {
+                    serialSpace = largeSerial - 2;
+                }
+            }
             if(i > 0)
             {
                 nameSpace = largeName - strlen(node->name) + 1 ;
-                printf("%s %5s %d %*s%d%s%s%s%s%s\n", SUBBREAK, SUBBREAK, i, largeSerial, SUBBREAK, node->id, SUBBREAK, node->name, SUBBREAK, node->telephone, SUBBREAK);
+                printf("%s %5s %d %*s%d%s%s%s%s%s\n", SUBBREAK, SUBBREAK, i, serialSpace, SUBBREAK, node->id, SUBBREAK, node->name, SUBBREAK, node->telephone, SUBBREAK);
                 node = node->nextNode;
             }
         }    
@@ -192,15 +211,15 @@ int largestSerial(int x)
 
     if(x > 0 && x < 9)
     {
-        largeSerial = 1;
+        largeSerial = 1 + 5;
     }
     else if(x > 9 && x < 99)
     {
-        largeSerial = 2;
+        largeSerial = 2 + 5;
     }
     else if(x > 99 && x < 999)
     {
-        largeSerial = 3;
+        largeSerial = 3 + 5;
     }
 
     return largeSerial;
