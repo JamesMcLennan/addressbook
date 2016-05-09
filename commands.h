@@ -18,6 +18,11 @@
 #define COMMAND_SORT_NAME "name"
 #define COMMAND_SORT_RANDOM "random"
 
+#define EMPTYLIST 0
+#define SINGLESERIAL 6
+#define DOUBLESERIAL 7
+#define TRIPLESERIAL 8
+
 TelephoneBookList * commandLoad(char * fileName);
 void commandUnload(TelephoneBookList * list);
 void commandDisplay(TelephoneBookList * list);
@@ -33,4 +38,7 @@ void commandSortRandom(TelephoneBookList * list);
 
 int largestName(TelephoneBookList * list);
 int largestSerial(int x);
+int changingSerialSize(int largeSerial, int i);
+int largestID(int x);
+int changingIDSize(int largeID);
 #endif
