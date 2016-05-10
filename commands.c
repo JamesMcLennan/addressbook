@@ -98,7 +98,7 @@ void commandDisplay(TelephoneBookList * list)
         for(i = 0; i < list->size; i++) 
         {
             serialSpace = changingSerialSize(largeSerial, i); /* Modify serialSpace for each list*/
-            idSpace = changingIDSize(largeID);
+            idSpace = changingIDSize(largeID, node->id);
             if(i < list->size) /* While 'i' is less than the list size*/
             {
                 /*Print each line with a SUBBREAK in between each classification of an address*/
@@ -110,7 +110,7 @@ void commandDisplay(TelephoneBookList * list)
     FORMAT;
     printf("| Total phone book entries: %d %16s\n", list->size, SUBBREAK); /*Print the final summary of x itmes in the addressbook. NEED TO ADD SIZE function*/
     FORMAT;
-    }
+}
 
 void commandForward(TelephoneBookList * list, int moves)
 {
@@ -215,8 +215,8 @@ int changingSerialSize(int largeSerial, int i)
 int largestID(int x)
 {
     int largeID;
-    int threeDigitID = 3;
-    int fourDigitID = 4;
+    int threeDigitID = 2;
+    int fourDigitID = 3;
 
     if(x >= 100 && x < 1000)
     {
@@ -230,15 +230,15 @@ int largestID(int x)
     return largeID;
 }
 
-int changingIDSize(int largeID)
+int changingIDSize(int largeID, int id)
 {
     int idSpace;
     
-    if(largeID < 1000)
+    if(id < 1000)
     {
         idSpace = largeID - 1;
     }
-    else if(largeID >= 1000)
+    else if(id  >= 1000)
     {
         idSpace = largeID - 2;
     }
