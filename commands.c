@@ -76,7 +76,7 @@ void commandDisplay(TelephoneBookList * list)
     }
     else
     {
-        largeSerial = largestSerial(list->size); /*Obtain the largest serial in the list*/
+        largeSerial = 6; /*Obtain the largest serial in the list*/
         largeName = largestName(list); /*Obtain the largest name in the list*/
         serialSpace = largeSerial; /* Assign the largest serial in the list to the width of the serial*/
         largeID = largestID(node->id);
@@ -193,30 +193,6 @@ int largestName(TelephoneBookList * list)
     return largeX;
 }
 
-int largestSerial(int x)
-{
-    int largeSerial;
-    int serialLength = 5; /*Minimum serial size*/
-    int singleSerial = 1; /*Add a single space for a single digit*/
-    int doubleSerial = 2; /*Add two spaces for a double digit*/
-    int tripleSerial = 3; /*Add three spaces for a triple digit*/
-    
-    if(x > 0 && x < 9) /*The below if/else statments seachers for the largest serial (1, 2 or 3 digits)*/
-    {
-        largeSerial = serialLength + singleSerial;
-    }
-    else if(x > 9 && x < 99)
-    {
-        largeSerial = serialLength + doubleSerial;
-    }
-    else if(x > 99 && x < 999)
-    {
-        largeSerial = serialLength + tripleSerial;
-    }
-
-    return largeSerial; /*Returns the largest serial digit length*/
-}
-
 int changingSerialSize(int largeSerial, int i)
 {
     int serialSpace; 
@@ -264,7 +240,7 @@ int changingIDSize(int largeID)
     }
     else if(largeID >= 1000)
     {
-        idSpace = largeID - 5;
+        idSpace = largeID - 2;
     }
     
     return idSpace;
