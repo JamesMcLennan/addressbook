@@ -39,5 +39,5 @@ void commandSortRandom(TelephoneBookList * list);
 int largestName(TelephoneBookList * list);
 int changingSerialSize(int largeSerial, int i);
 int largestID(int x);
-int changingIDSize(int largeID);
+int changingIDSize(int largeID, int id);
 #endif
