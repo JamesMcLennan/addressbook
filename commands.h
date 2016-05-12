@@ -42,4 +42,5 @@ int changingSerialSize(int largeSerial, int i);
 int largestID(int x);
 int changingIDSize(int largeID, int id);
 int finalEntries(int listSize);
+char * checkCurrent(TelephoneBookList * list, char current);
 #endif

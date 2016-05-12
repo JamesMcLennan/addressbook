@@ -35,14 +35,19 @@ TelephoneBookNode * createTelephoneBookNode()
     }
     else
     {
-        
         return NULL;
     }
 }
 
 void freeTelephoneBookNode(TelephoneBookNode * node)
 {
+    while(node != NULL)
+    {
+        TelephoneBookNode * deleteNode = node;
+        node = node->nextNode;
 
+        free(deleteNode);
+    }
 }
 
 Boolean insert(TelephoneBookList * list, TelephoneBookNode * node)

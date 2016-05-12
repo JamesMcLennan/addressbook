@@ -39,6 +39,11 @@ int main(int argc, char ** argv)
                     commandDisplay(list);
                 }
             }
+            else if(strcmp(token, COMMAND_UNLOAD) == 0)
+            {
+                commandUnload(list);
+                list = NULL;
+            }
             /*Input does not match / Buffer overflow*/
             else
             {
