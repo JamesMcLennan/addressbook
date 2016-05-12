@@ -21,10 +21,7 @@ TelephoneBookList * createTelephoneBookList()
 
 void freeTelephoneBookList(TelephoneBookList* list)
 {
-    if(list->head == NULL)
-    {
-        free(list);
-    }
+    free(list);
 }
 
 TelephoneBookNode * createTelephoneBookNode()
@@ -44,13 +41,12 @@ TelephoneBookNode * createTelephoneBookNode()
 
 void freeTelephoneBookNode(TelephoneBookNode * node)
 {
-    TelephoneBookNode * deleteNode;
-    while(node->nextNode == NULL)
+    while(node != NULL)
     {
-        deleteNode = node->previousNode;
-        free(node);
-        node = deleteNode;
-        printf("I am getting here\n");
+        TelephoneBookNode * deleteNode = node;
+        node = node->nextNode;
+
+        free(deleteNode);
     }
 }
 

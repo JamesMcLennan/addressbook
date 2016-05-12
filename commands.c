@@ -56,11 +56,13 @@ TelephoneBookList * commandLoad(char * fileName)
 
 void commandUnload(TelephoneBookList * list)
 {
-   TelephoneBookNode * node = list->tail;
    if(list != NULL)
    {
+       TelephoneBookNode * node = list->head;
        freeTelephoneBookNode(node);
+       freeTelephoneBookList(list);
    }
+   printf("> The list is unloaded.\n");
 }
 
 void commandDisplay(TelephoneBookList * list)
@@ -73,7 +75,8 @@ void commandDisplay(TelephoneBookList * list)
     int largeID, idSpace;
     int totalEntries;
     char name[] = "Name";
-    
+    char *checkCurrent;
+
     if(list->size == EMPTYLIST) /* User attempts to display an empty list*/
     {
         largeName = EMPTYLIST;
@@ -108,10 +111,18 @@ void commandDisplay(TelephoneBookList * list)
             serialSpace = changingSerialSize(largeSerial, i); /* Modify serialSpace for each list*/
             idSpace = changingIDSize(largeID, node->id);
             nameSpace = changingNameSize(node->name, largeName);
+            if(node == list->current)
+            {
+                checkCurrent = "CUR";
+            }
+            else
+            {
+                checkCurrent = "   ";
+            }
             if(i <= list->size) /* While 'i' is less than the list size*/
             {
                 /*Print each line with a SUBBREAK in between each classification of an address*/
-                printf("%s %s %s %d %*s %d %*s %s %*s %s %s\n", SUBBREAK,"CUR" ,SUBBREAK, i, serialSpace, SUBBREAK, node->id, idSpace, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
+                printf("%s %s %s %d %*s %d %*s %s %*s %s %s\n", SUBBREAK, checkCurrent, SUBBREAK, i, serialSpace, SUBBREAK, node->id, idSpace, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
                 node = node->nextNode; /*Change node to the nextNode in the list*/
             }
         }    
@@ -283,4 +294,3 @@ int finalEntries(int listSize)
     
     return totalSpace;
 }
-
