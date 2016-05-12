@@ -41,8 +41,8 @@ int main(int argc, char ** argv)
             }
             else if(strcmp(token, COMMAND_UNLOAD) == 0)
             {
-                printf("> The list is unloaded.\n");
                 commandUnload(list);
+                list = NULL;
             }
             /*Input does not match / Buffer overflow*/
             else
