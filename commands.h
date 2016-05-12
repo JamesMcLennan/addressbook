@@ -37,7 +37,9 @@ void commandSortName(TelephoneBookList * list);
 void commandSortRandom(TelephoneBookList * list);
 
 int largestName(TelephoneBookList * list);
+int changingNameSize(char * name, int largestName);
 int changingSerialSize(int largeSerial, int i);
 int largestID(int x);
 int changingIDSize(int largeID, int id);
+int finalEntries(int listSize);
 #endif

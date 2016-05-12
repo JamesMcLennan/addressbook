@@ -56,7 +56,11 @@ TelephoneBookList * commandLoad(char * fileName)
 
 void commandUnload(TelephoneBookList * list)
 {
-
+   TelephoneBookNode * node = list->tail;
+   if(list != NULL)
+   {
+       freeTelephoneBookNode(node);
+   }
 }
 
 void commandDisplay(TelephoneBookList * list)
@@ -67,12 +71,15 @@ void commandDisplay(TelephoneBookList * list)
     int largeName, nameSpace; /* Largest name in the list, space for each name in the list*/
     int largeSerial, serialSpace; /* Largest serial in the list, space for serial in the list*/
     int largeID, idSpace;
-
+    int totalEntries;
+    char name[] = "Name";
+    
     if(list->size == EMPTYLIST) /* User attempts to display an empty list*/
     {
         largeName = EMPTYLIST;
         largeSerial = EMPTYLIST;
         largeID = EMPTYLIST;
+        totalEntries = EMPTYLIST;
     }
     else
     {
@@ -80,13 +87,14 @@ void commandDisplay(TelephoneBookList * list)
         largeName = largestName(list); /*Obtain the largest name in the list*/
         serialSpace = largeSerial; /* Assign the largest serial in the list to the width of the serial*/
         largeID = largestID(node->id);
+        totalEntries = finalEntries(list->size);
     }
     FORMAT;
     printf("%s %s %s", SUBBREAK, "Pos", SUBBREAK); /* | Pos |*/
     printf(" %*s %s", largeSerial, "Serial", SUBBREAK); /* Serial(largest serial length) |*/
     printf(" %s %*s", "ID", largeID, SUBBREAK); /* */
-    printf(" %s %s", "Name", SUBBREAK);
-    printf(" %s %s\n", "Telephone", SUBBREAK);
+    printf(" %s %*s", name, changingNameSize(name, largeName), SUBBREAK);
+    printf(" %s  %s\n", "Telephone", SUBBREAK);
     FORMAT;
 
     if(list->size == EMPTYLIST) /* If empty list - print blank list*/
@@ -95,20 +103,21 @@ void commandDisplay(TelephoneBookList * list)
     }
     else
     {
-        for(i = 0; i < list->size; i++) 
+        for(i = 1; i <= list->size; i++) 
         {
             serialSpace = changingSerialSize(largeSerial, i); /* Modify serialSpace for each list*/
             idSpace = changingIDSize(largeID, node->id);
-            if(i < list->size) /* While 'i' is less than the list size*/
+            nameSpace = changingNameSize(node->name, largeName);
+            if(i <= list->size) /* While 'i' is less than the list size*/
             {
                 /*Print each line with a SUBBREAK in between each classification of an address*/
-                printf("%s %5s %d %*s %d %*s%s%s%s%s\n", SUBBREAK, SUBBREAK, i, serialSpace, SUBBREAK, node->id, idSpace, SUBBREAK, node->name, SUBBREAK, node->telephone, SUBBREAK);
+                printf("%s %s %s %d %*s %d %*s %s %*s %s %s\n", SUBBREAK,"CUR" ,SUBBREAK, i, serialSpace, SUBBREAK, node->id, idSpace, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
                 node = node->nextNode; /*Change node to the nextNode in the list*/
             }
         }    
     }
     FORMAT;
-    printf("| Total phone book entries: %d %16s\n", list->size, SUBBREAK); /*Print the final summary of x itmes in the addressbook. NEED TO ADD SIZE function*/
+    printf("| Total phone book entries: %d %*s\n", list->size, totalEntries, SUBBREAK); /*Print the final summary of x itmes in the addressbook. NEED TO ADD SIZE function*/
     FORMAT;
 }
 
@@ -179,7 +188,7 @@ int largestName(TelephoneBookList * list)
     TelephoneBookNode * node = list->head;
 
     int x, largeX;
-
+    
     while(node != NULL)
     {
         x = strlen(node->name);
@@ -187,12 +196,21 @@ int largestName(TelephoneBookList * list)
         {
             largeX = x;
         }
-
         node = node->nextNode;
-    }
+     }
     return largeX;
 }
 
+int changingNameSize(char * name, int largeID)
+{
+    int nameSize = strlen(name);
+
+    while(nameSize <= largeID)
+    {
+        nameSize++;
+    }
+    return nameSize - strlen(name);
+}
 int changingSerialSize(int largeSerial, int i)
 {
     int serialSpace; 
@@ -201,7 +219,7 @@ int changingSerialSize(int largeSerial, int i)
     {
         serialSpace = largeSerial;
     }
-    else if(i > 9 && i <= 99)
+    else if(i >= 10 && i <= 99)
     {
         serialSpace = largeSerial - 1;
     }
@@ -245,3 +263,24 @@ int changingIDSize(int largeID, int id)
     
     return idSpace;
 }
+
+int finalEntries(int listSize)
+{
+    int totalSpace = 16;
+
+    if(listSize < 10)
+    {
+        totalSpace = totalSpace - 1;
+    }
+    else if(listSize >= 10 && listSize < 100)
+    {
+        totalSpace = totalSpace - 2;
+    }
+    else if(listSize >= 100 && listSize < 1000)
+    {
+        totalSpace = totalSpace - 3;
+    }
+    
+    return totalSpace;
+}
+
