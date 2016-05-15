@@ -28,7 +28,7 @@ typedef enum boolean
 #define EMPTY_STRING ""
 
 #define DELIMS ", "
-#define FORMAT printf("----------------------------------------------\n"); /*46 Characters long*/
+#define FORMAT printf("---------------------------------------------\n"); /*46 Characters long*/
 #define SUBBREAK "|"
 /**
  * Call this function whenever you detect buffer overflow.

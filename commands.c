@@ -1,5 +1,4 @@
 #include "commands.h"
-#define MAX 1000
 
 TelephoneBookList * commandLoad(char * fileName)
 {
@@ -7,9 +6,9 @@ TelephoneBookList * commandLoad(char * fileName)
     char *token; /*Pointer for tokenizer*/
     char name[MAX];
     char telephone[MAX];
-    int lines = 0;
     int number; /*Used to store the ID of the address.*/
     TelephoneBookList * telephonebooklist;
+    TelephoneBookNode * node;
     FILE *fp = fopen(fileName, "r"); /*Open the file requested from the user.*/
     
     if(fp == NULL)
@@ -24,25 +23,31 @@ TelephoneBookList * commandLoad(char * fileName)
         telephonebooklist = createTelephoneBookList();
         while(fgets(text, MAX, fp)) /*While there is text to read in the file called from fopen()*/ 
         {
-            text[strlen(text) - 1] = '\0';
+            text[strlen(text) - CLEARONECHAR] = '\0';
 
-            if(strncmp(text, "#", 1) != 0) /*Ignores lines that being with a # - Comment lines*/
+            if(strncmp(text, COMMENT, CLEARONECHAR) != 0) /*Ignores lines that being with a # - Comment lines*/
             {
-                lines++;
-                
-                token = strtok(text, ", ");
+                token = strtok(text, DELIMS);
                 while(token != NULL)
                 {
+                    node = createTelephoneBookNode();
+                    
                     number = strtol(token, &token, 0);
-                    token = strtok(NULL, ", ");
+                    node->id = number;
+                    token = strtok(NULL, DELIMS);
                     
-                    strcpy(name, token); 
-                    token = strtok(NULL, ", ");
+                    strcpy(node->name, token);
+                    token = strtok(NULL, DELIMS);
                     
-                    strcpy(telephone, token);
-                    
-                    commandInsert(telephonebooklist, number, name, telephone);
-                    token = strtok(NULL, ", ");
+                    strcpy(node->telephone, token);
+
+                    if(insert(telephonebooklist, node) == FALSE)
+                    {
+                        printf("> Error: \n");
+                        commandUnload(telephonebooklist);
+                        break;
+                    }
+                    token = strtok(NULL, DELIMS);
                 }
             }
         }
@@ -62,7 +67,6 @@ void commandUnload(TelephoneBookList * list)
        freeTelephoneBookNode(node);
        freeTelephoneBookList(list);
    }
-   printf("> The list is unloaded.\n");
 }
 
 void commandDisplay(TelephoneBookList * list)
@@ -74,7 +78,7 @@ void commandDisplay(TelephoneBookList * list)
     int largeSerial, serialSpace; /* Largest serial in the list, space for serial in the list*/
     int largeID, idSpace;
     int totalEntries;
-    char name[] = "Name";
+    /*char name[] = "Name";*/
     char *checkCurrent;
 
     if(list->size == EMPTYLIST) /* User attempts to display an empty list*/
@@ -86,18 +90,18 @@ void commandDisplay(TelephoneBookList * list)
     }
     else
     {
-        largeSerial = 6; /*Obtain the largest serial in the list*/
+        largeSerial = MAXSERIALSIZE; /*Obtain the largest serial in the list*/
         largeName = largestName(list); /*Obtain the largest name in the list*/
         serialSpace = largeSerial; /* Assign the largest serial in the list to the width of the serial*/
         largeID = largestID(node->id);
         totalEntries = finalEntries(list->size);
     }
     FORMAT;
-    printf("%s %s %s", SUBBREAK, "Pos", SUBBREAK); /* | Pos |*/
-    printf(" %*s %s", largeSerial, "Serial", SUBBREAK); /* Serial(largest serial length) |*/
-    printf(" %s %*s", "ID", largeID, SUBBREAK); /* */
-    printf(" %s %*s", name, changingNameSize(name, largeName), SUBBREAK);
-    printf(" %s  %s\n", "Telephone", SUBBREAK);
+    printf("%s %s %s", SUBBREAK, POSHEAD, SUBBREAK); /* | Pos |*/
+    printf(" %*s %s", largeSerial, SERIALHEAD, SUBBREAK); /* Serial(largest serial length) |*/
+    printf(" %s %*s", IDHEAD, largeID, SUBBREAK); /* */
+    printf(" %s %*s", NAMEHEAD, changingNameSize(NAMEHEAD, largeName), SUBBREAK);
+    printf(" %s  %s\n", TELEHEAD, SUBBREAK);
     FORMAT;
 
     if(list->size == EMPTYLIST) /* If empty list - print blank list*/
@@ -113,16 +117,17 @@ void commandDisplay(TelephoneBookList * list)
             nameSpace = changingNameSize(node->name, largeName);
             if(node == list->current)
             {
-                checkCurrent = "CUR";
+                checkCurrent = CURRENT;
             }
             else
             {
-                checkCurrent = "   ";
+                checkCurrent = EMPTYPOS;
             }
             if(i <= list->size) /* While 'i' is less than the list size*/
             {
                 /*Print each line with a SUBBREAK in between each classification of an address*/
-                printf("%s %s %s %d %*s %d %*s %s %*s %s %s\n", SUBBREAK, checkCurrent, SUBBREAK, i, serialSpace, SUBBREAK, node->id, idSpace, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
+                printf("%s %s %s %d %*s %d %*s %s %*s %s %s\n", SUBBREAK, checkCurrent, SUBBREAK, i, serialSpace, 
+                    SUBBREAK, node->id, idSpace, SUBBREAK, node->name, nameSpace, SUBBREAK, node->telephone, SUBBREAK);
                 node = node->nextNode; /*Change node to the nextNode in the list*/
             }
         }    
@@ -155,7 +160,7 @@ void commandInsert(TelephoneBookList * list, int id, char * name, char * telepho
     {
         strcpy(telephonebooknode->name, name); /* Copy the name passed to the telephonebooknode member name*/
     }
-    if(strlen(telephone) == TELEPHONE_LENGTH - 1) /* If the length of the telephone number is equal to the max length -1 for the null character*/
+    if(strlen(telephone) == TELEPHONE_LENGTH - CLEARONECHAR) /* If the length of the telephone number is equal to the max length -1 for the null character*/
     {
         strcpy(telephonebooknode->telephone, telephone); /* Copy the name passed to the telephonebooknode member telephone*/
     }
@@ -294,3 +299,5 @@ int finalEntries(int listSize)
     
     return totalSpace;
 }
+
+

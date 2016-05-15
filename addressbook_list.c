@@ -54,6 +54,19 @@ Boolean insert(TelephoneBookList * list, TelephoneBookNode * node)
 {
     TelephoneBookNode * prevNode, * curNode;
 
+    if(node->id < 0 || node->id > MAXID)
+    {
+        return FALSE;
+    }
+    if(strlen(node->name) > NAME_LENGTH)
+    {
+        return FALSE;
+    }
+    if(strlen(node->telephone) > TELEPHONE_LENGTH)
+    {
+        return FALSE;
+    }
+
     prevNode = NULL;
     curNode = list->head;
 
@@ -75,7 +88,7 @@ Boolean insert(TelephoneBookList * list, TelephoneBookNode * node)
         node->nextNode = curNode;
     }
     list->size++;
-    return FALSE;
+    return TRUE;
 
 }
 

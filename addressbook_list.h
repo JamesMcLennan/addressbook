@@ -7,6 +7,7 @@
 #define TELEPHONE_LENGTH (10 + NULL_SPACE)
 
 #define NODE_MINIMUM_ID 1
+#define MAXID 9999
 
 typedef struct telephoneBookNode
 {
