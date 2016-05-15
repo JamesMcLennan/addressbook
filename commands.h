@@ -18,11 +18,23 @@
 #define COMMAND_SORT_NAME "name"
 #define COMMAND_SORT_RANDOM "random"
 
+#define MAX 1000
 #define EMPTYLIST 0
 #define SINGLESERIAL 6
 #define DOUBLESERIAL 7
 #define TRIPLESERIAL 8
 
+#define COMMENT "#"
+#define CLEARONECHAR 1
+#define MAXSERIALSIZE 6
+
+#define POSHEAD "Pos"
+#define SERIALHEAD "Serial"
+#define IDHEAD "ID"
+#define NAMEHEAD "Name"
+#define TELEHEAD "Telephone"
+#define CURRENT "CUR"
+#define EMPTYPOS "   "
 TelephoneBookList * commandLoad(char * fileName);
 void commandUnload(TelephoneBookList * list);
 void commandDisplay(TelephoneBookList * list);

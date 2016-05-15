@@ -43,6 +43,7 @@ int main(int argc, char ** argv)
             {
                 commandUnload(list);
                 list = NULL;
+                printf("> The list is unloaded.\n");
             }
             /*Input does not match / Buffer overflow*/
             else
@@ -52,6 +53,10 @@ int main(int argc, char ** argv)
             token = strtok(NULL, DELIMS);
         }
     }while(strcmp(input, COMMAND_QUIT) != 0);
+    if(list != NULL)
+    {
+        commandUnload(list);
+    }
     return EXIT_SUCCESS; 
 }
 
