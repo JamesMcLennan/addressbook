@@ -4,8 +4,6 @@ TelephoneBookList * commandLoad(char * fileName)
 {
     char text[MAX]; /*Character array used to store the file*/
     char *token; /*Pointer for tokenizer*/
-    char name[MAX];
-    char telephone[MAX];
     int number; /*Used to store the ID of the address.*/
     TelephoneBookList * telephonebooklist;
     TelephoneBookNode * node;
@@ -21,6 +19,7 @@ TelephoneBookList * commandLoad(char * fileName)
     {
         printf("> Loading the file...\n");
         telephonebooklist = createTelephoneBookList();
+        
         while(fgets(text, MAX, fp)) /*While there is text to read in the file called from fopen()*/ 
         {
             text[strlen(text) - CLEARONECHAR] = '\0';
@@ -37,20 +36,23 @@ TelephoneBookList * commandLoad(char * fileName)
                     token = strtok(NULL, DELIMS);
                     
                     strcpy(node->name, token);
+                    if(strlen(node->name) > NAME_LENGTH)
+                    {
+                        printf("Fail\n");
+                        commandUnload(telephonebooklist);
+                        telephonebooklist = NULL;
+                        return telephonebooklist;
+                    }
                     token = strtok(NULL, DELIMS);
                     
                     strcpy(node->telephone, token);
 
-                    if(insert(telephonebooklist, node) == FALSE)
-                    {
-                        printf("> Error: \n");
-                        commandUnload(telephonebooklist);
-                        break;
-                    }
+                    insert(telephonebooklist, node);
                     token = strtok(NULL, DELIMS);
                 }
             }
         }
+        
         printf("> %d phone book entries have been loaded from the file.\n", telephonebooklist->size);
         fclose(fp);
         printf("> Closing the file.\n");
