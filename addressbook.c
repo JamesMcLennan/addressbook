@@ -26,6 +26,11 @@ int main(int argc, char ** argv)
             else if(strncmp(token, COMMAND_LOAD, 3) == 0)
             {
                 list = loadFile(token);
+                if(list == NULL)
+                {
+                    printf("Error\n");
+                    break;
+                }
             }
             else if(strcmp(token, COMMAND_DISPLAY) == 0)
             {
@@ -44,6 +49,7 @@ int main(int argc, char ** argv)
                 commandUnload(list);
                 list = NULL;
                 printf("> The list is unloaded.\n");
+                break;
             }
             /*Input does not match / Buffer overflow*/
             else
