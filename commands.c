@@ -1,5 +1,7 @@
 #include "commands.h"
 
+int tally = 0;
+
 TelephoneBookList * commandLoad(char * fileName)
 {
     char text[MAX]; /*Character array used to store the file*/
@@ -141,12 +143,24 @@ void commandDisplay(TelephoneBookList * list)
 
 void commandForward(TelephoneBookList * list, int moves)
 {
-
+    /*if(moves > EMPTYLIST && moves < list->size)
+    {*/
+        if(forward(list, moves) == FALSE)
+        {
+            printf("> Unable to move %d nodes forward\n", moves);
+        }
+    
 }
 
 void commandBackward(TelephoneBookList * list, int moves)
 {
-
+    if (moves > EMPTYLIST && moves < list->size)
+    {
+        if(backward(list, moves) == FALSE)
+        {
+            printf("> Unable to move %d nodes backward\n", moves);
+        }
+    }
 }
 
 void commandInsert(TelephoneBookList * list, int id, char * name, char * telephone)
@@ -301,5 +315,3 @@ int finalEntries(int listSize)
     
     return totalSpace;
 }
-
-

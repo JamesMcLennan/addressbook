@@ -73,6 +73,7 @@ Boolean insert(TelephoneBookList * list, TelephoneBookNode * node)
     {
         prevNode->nextNode = node;
         node->nextNode = curNode;
+        node->previousNode = prevNode;
     }
     list->size++;
     return TRUE;
@@ -80,12 +81,50 @@ Boolean insert(TelephoneBookList * list, TelephoneBookNode * node)
 
 Boolean forward(TelephoneBookList * list, int forward)
 {
-    return FALSE;
+    TelephoneBookNode * firstNode = list->current;
+    int i;
+    if(forward < list->size)
+    {
+        while(i < forward)
+        {
+            if(firstNode->nextNode == NULL)
+            {
+                return FALSE;
+            }
+            list->current = firstNode->nextNode;
+            firstNode = list->current;
+            i++;
+        }
+    }
+    else
+    {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 Boolean backward(TelephoneBookList * list, int backward)
 {
-    return FALSE;
+    TelephoneBookNode * firstNode = list->current;
+    int i;
+    if(backward < list->size)
+    {
+        while(i < backward)
+        {
+            if(firstNode->previousNode == NULL)
+            {
+                return FALSE;
+            }
+            list->current = firstNode->previousNode;
+            firstNode = list->current;
+            i++;
+        }
+    }
+    else
+    {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 Boolean delete(TelephoneBookList * list)
