@@ -5,6 +5,7 @@ int main(int argc, char ** argv)
     char usertext[FULLSIZE];
     char *token;
     char *input;
+    int shiftPosition;
     TelephoneBookList * list;
     list = NULL;
     /* Show student information */
@@ -28,7 +29,6 @@ int main(int argc, char ** argv)
                 list = loadFile(token);
                 if(list == NULL)
                 {
-                    printf("Error\n");
                     break;
                 }
             }
@@ -51,6 +51,22 @@ int main(int argc, char ** argv)
                 printf("> The list is unloaded.\n");
                 break;
             }
+            else if(strcmp(token, COMMAND_FORWARD) == 0)
+            {
+                token = strtok(NULL, DELIMS);
+                shiftPosition = strtol(token, &token, 0);
+                commandForward(list, shiftPosition);
+            }
+            else if(strcmp(token, COMMAND_BACKWARD) == 0)
+            {
+                token = strtok(NULL, DELIMS);
+                shiftPosition = strtol(token, &token, 0);
+                commandBackward(list, shiftPosition);
+            }
+            else if(strcmp(token, COMMAND_INSERT) == 0)
+            {
+                /*commandInsert();*/
+            }
             /*Input does not match / Buffer overflow*/
             else
             {
@@ -63,7 +79,7 @@ int main(int argc, char ** argv)
     {
         commandUnload(list);
     }
-    return EXIT_SUCCESS; 
+    return EXIT_SUCCESS;
 }
 
 void studentInformation()
@@ -93,3 +109,14 @@ TelephoneBookList * loadFile(char * token)
     }
 }
 
+void calculateMoves(int shiftPosition, int listSize)
+{
+    if(shiftPosition >= EMPTYLIST && shiftPosition <= listSize)
+    {
+        printf("I am able to move %d nodes\n", shiftPosition);
+    }
+    else
+    {
+        printf("> Unable to move %d nodes\n", shiftPosition);
+    }
+}
