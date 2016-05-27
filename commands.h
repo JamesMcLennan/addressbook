@@ -26,7 +26,12 @@
 
 #define COMMENT "#"
 #define CLEARONECHAR 1
+#define CLEARTWOCHAR 2
 #define MAXSERIALSIZE 6
+#define SMALLSERIALSIZE 10
+#define MEDIUMSERIALSIZE 99
+#define LARGESERIALSIZE 999
+
 
 #define POSHEAD "Pos"
 #define SERIALHEAD "Serial"
