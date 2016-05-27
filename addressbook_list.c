@@ -164,6 +164,16 @@ Boolean delete(TelephoneBookList * list)
 
 TelephoneBookNode * findByID(TelephoneBookList * list, int id)
 {
+    TelephoneBookNode * findNode = list->head;
+    while(findNode != NULL)
+    {
+        if(id == findNode->id)
+        {
+            printf("sokdao\n");
+            return findNode;       
+        }
+        findNode = findNode->nextNode;
+    }
     return NULL;
 }
 

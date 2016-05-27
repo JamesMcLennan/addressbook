@@ -158,21 +158,38 @@ void commandInsert(TelephoneBookList * list, int id, char * name, char * telepho
 {
     TelephoneBookNode * telephonebooknode; 
     telephonebooknode = createTelephoneBookNode(); /*Create a node*/
-
-    if(id > 0 && id < 9999)
+    if(list == NULL)
     {
-        telephonebooknode->id = id; /*As long as the ID is greater than 0, assign telephonebook node to the id*/
+        list = createTelephoneBookList();
     }
-    if(strlen(name) <= NAME_LENGTH) /* If the length of the name passed is less than or equal the max length*/
+    if(id > LOWESTID && id < FOURDIGITID)
     {
-        strcpy(telephonebooknode->name, name); /* Copy the name passed to the telephonebooknode member name*/
+        if(findByID(list, id) == NULL)
+        {
+            if(strlen(name) <= NAME_LENGTH) /* If the length of the name passed is less than or equal the max length*/
+            {
+                if(strlen(telephone) == TELEPHONE_LENGTH - CLEARONECHAR) /* If the length of the telephone number is equal to the max length -1 for the null character*/
+                {
+                    telephonebooknode->id = id; /*As long as the ID is greater than 0, assign telephonebook node to the id*/
+                    strcpy(telephonebooknode->name, name); /* Copy the name passed to the telephonebooknode member name*/
+                    strcpy(telephonebooknode->telephone, telephone); /* Copy the name passed to the telephonebooknode member telephone*/
+                    insert(list, telephonebooknode);
+                }
+                else
+                {
+                    printf("> Error: Incorrect format\n");
+                }
+            }
+            else
+            {
+                printf("> Error: Incorrect format\n");
+            }
+        }
+        else
+        {
+            printf("> Error: Node with ID %d already exists.\n", id);
+        }
     }
-    if(strlen(telephone) == TELEPHONE_LENGTH - CLEARONECHAR) /* If the length of the telephone number is equal to the max length -1 for the null character*/
-    {
-        strcpy(telephonebooknode->telephone, telephone); /* Copy the name passed to the telephonebooknode member telephone*/
-    }
-    
-    insert(list, telephonebooknode); /* Call insert */
 }
 
 
@@ -212,14 +229,13 @@ void commandDelete(TelephoneBookList * list)
 
 void commandReverse(TelephoneBookList * list)
 {
-    TelephoneBookNode * nextNode, * priorNode, * currentNode = list->head, * prevNode = NULL;
-
+    TelephoneBookNode * nextNode, * currentNode = list->head, * prevNode = NULL;
+    
     if(list != NULL)
     {
         while(currentNode != NULL)
         {
             nextNode = currentNode->nextNode; /* Assign an empty node to the currentNode's next position*/
-            priorNode = currentNode->previousNode; /* Assign the currentNode's previous position to 'priorNode'*/
             
             currentNode->nextNode = prevNode; /* currentNode's next position is assigned to the prevNode (In the first instance this is NULL)*/
             currentNode->previousNode = nextNode; /* CurrentNode's previousNode is assigned to the nextNode (changing the direction essentially)*/
@@ -240,10 +256,19 @@ void commandSave(TelephoneBookList * list, char * fileName)
 {
     TelephoneBookNode * node = list->head;
     FILE *fp = fopen(fileName, "w+");
-
-    while(fputs(node->name, fp))
+    
+    char name[MAX];
+    char telephone[MAX];
+    while(node != NULL)
     {
-        printf("Test\n");
+        fprintf(fp, "%d, ", node->id);
+        
+        strcpy(name, node->name);
+        fprintf(fp, "%s, ", name);
+
+        strcpy(telephone, node->telephone);
+        fprintf(fp, "%s\n", telephone);
+        
         node = node->nextNode;
     }
     fclose(fp);
@@ -256,7 +281,7 @@ void commandSortName(TelephoneBookList * list)
 
 void commandSortRandom(TelephoneBookList * list)
 {
-
+    printf("Test\n");
 }
 
 int largestName(TelephoneBookList * list)
@@ -309,35 +334,52 @@ int changingSerialSize(int largeSerial, int i)
 int largestID(int x)
 {
     int largeID;
+    int oneDigitID = 0;
+    int twoDigitID = 1;
     int threeDigitID = 2;
     int fourDigitID = 3;
-
-    if(x >= 100 && x < 1000)
+    
+    if(x > LOWESTID && x < SINGLEDIGITID) /* If x is passed through, and x is greater than 0 and less than 10 it returns the spaces required to adjust the display*/
     {
-        largeID = threeDigitID;
+        largeID = oneDigitID; /* Spaces required = 0*/
     }
-    else if( x >= 1000 && x < 10000)
+    else if( x >= SINGLEDIGITID && x < DOUBLEDIGITID) /* If x is greater than 10 and less than 100, essentially if it has two digits.*/
     {
-        largeID = fourDigitID;
+        largeID = twoDigitID; /* Spaces required = 1*/
+    }
+    else if(x >= DOUBLEDIGITID && x < TRIPLEDIGITID) /* If x is greater than 100 and less than 1000, essentially if it has three digits*/
+    {
+        largeID = threeDigitID; /* Spaces required = 2*/
+    }
+    else if( x >= TRIPLEDIGITID && x < FOURDIGITID) /* If x is greater than 1000 and less than 10000, essentially if it has four digits*/
+    {
+        largeID = fourDigitID; /* Spaces required = 3*/
     }
 
-    return largeID;
+    return largeID; /*The last return will be the largest ID size */
 }
 
 int changingIDSize(int largeID, int id)
 {
     int idSpace;
-    
-    if(id < 1000)
+    if(id < SINGLEDIGITID) /* Check if the ID is less than 10*/
     {
-        idSpace = largeID - CLEARONECHAR;
+        idSpace = largeID + CLEARONECHAR; /* The size allocated for this ID is the largest ID size, plus 1 as the single digit is significantly smaller.*/
     }
-    else if(id  >= 1000)
+    else if(id < DOUBLEDIGITID) /* Check if the ID is less than 100*/
     {
-        idSpace = largeID - CLEARTWOCHAR;
+        idSpace = largeID; 
+    }
+    else if(id < TRIPLEDIGITID) /* Check if the ID is less than 1000 (3 digits)*/
+    {
+        idSpace = largeID - CLEARONECHAR; /* The size allocated for this ID is the largest ID, minus a single char*/
+    }
+    else if(id  >= TRIPLEDIGITID) /* Check if the ID is less than 10000 (four digits)*/
+    {
+        idSpace = largeID - CLEARTWOCHAR; /* The size allocated for this ID is the largest ID, minus two char*/
     }
     
-    return idSpace;
+    return idSpace; /*Return each individual allocated size. */
 }
 
 int finalEntries(int listSize)

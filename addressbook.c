@@ -38,6 +38,7 @@ int main(int argc, char ** argv)
                 {
                     list = createTelephoneBookList();
                     commandDisplay(list);
+                    list = NULL;
                 }
                 else
                 {
@@ -106,7 +107,14 @@ int main(int argc, char ** argv)
             }
             else if(strcmp(token, COMMAND_REVERSE) == 0)
             {
-                commandReverse(list);
+                if(list != NULL)
+                {
+                    commandReverse(list);
+                }
+                else
+                {
+                    printf("> Error: Caanot reverse an empty list.\n");
+                }
             }
             else if(strcmp(token, COMMAND_SAVE) == 0)
             {
