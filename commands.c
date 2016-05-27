@@ -1,7 +1,5 @@
 #include "commands.h"
 
-int tally = 0;
-
 TelephoneBookList * commandLoad(char * fileName)
 {
     char text[MAX]; /*Character array used to store the file*/
@@ -82,7 +80,6 @@ void commandDisplay(TelephoneBookList * list)
     int largeSerial, serialSpace; /* Largest serial in the list, space for serial in the list*/
     int largeID, idSpace;
     int totalEntries;
-    /*char name[] = "Name";*/
     char *checkCurrent;
 
     if(list->size == EMPTYLIST) /* User attempts to display an empty list*/
@@ -143,23 +140,17 @@ void commandDisplay(TelephoneBookList * list)
 
 void commandForward(TelephoneBookList * list, int moves)
 {
-    /*if(moves > EMPTYLIST && moves < list->size)
-    {*/
-        if(forward(list, moves) == FALSE)
-        {
-            printf("> Unable to move %d nodes forward\n", moves);
-        }
-    
+    if(forward(list, moves) == FALSE)
+    {
+        printf("> Unable to move %d nodes forward\n", moves);
+    }
 }
 
 void commandBackward(TelephoneBookList * list, int moves)
 {
-    if (moves > EMPTYLIST && moves < list->size)
+    if(backward(list, moves) == FALSE)
     {
-        if(backward(list, moves) == FALSE)
-        {
-            printf("> Unable to move %d nodes backward\n", moves);
-        }
+        printf("> Unable to move %d nodes backward\n", moves);
     }
 }
 
@@ -168,7 +159,7 @@ void commandInsert(TelephoneBookList * list, int id, char * name, char * telepho
     TelephoneBookNode * telephonebooknode; 
     telephonebooknode = createTelephoneBookNode(); /*Create a node*/
 
-    if(id > 0)
+    if(id > 0 && id < 9999)
     {
         telephonebooknode->id = id; /*As long as the ID is greater than 0, assign telephonebook node to the id*/
     }
@@ -187,22 +178,75 @@ void commandInsert(TelephoneBookList * list, int id, char * name, char * telepho
 
 void commandFind(TelephoneBookList * list, char * name)
 {
-
+   if(list != NULL)
+   {
+       if(strlen(name) <= NAME_LENGTH)
+       {
+           if(findByName(list, name) == NULL)
+           {
+               printf("> Error: Unable to find node.\n");
+           }
+       }
+       else
+       {
+           printf("> Error: Invalid format.\n");
+       }
+   }
+   else
+   {
+        printf("> Error: Unable to find node.\n");
+   }
 }
 
 void commandDelete(TelephoneBookList * list)
 {
-
+    if(list->size == CLEARONECHAR)
+    {
+        commandUnload(list);
+    }
+    else
+    {
+        delete(list);    
+    }
 }
 
 void commandReverse(TelephoneBookList * list)
 {
+    TelephoneBookNode * nextNode, * priorNode, * currentNode = list->head, * prevNode = NULL;
 
+    if(list != NULL)
+    {
+        while(currentNode != NULL)
+        {
+            nextNode = currentNode->nextNode; /* Assign an empty node to the currentNode's next position*/
+            priorNode = currentNode->previousNode; /* Assign the currentNode's previous position to 'priorNode'*/
+            
+            currentNode->nextNode = prevNode; /* currentNode's next position is assigned to the prevNode (In the first instance this is NULL)*/
+            currentNode->previousNode = nextNode; /* CurrentNode's previousNode is assigned to the nextNode (changing the direction essentially)*/
+
+            prevNode = currentNode; /*Update prevNode to equal the currentNode (remember prevNode is the currentNode's nextNode)*/
+            currentNode = nextNode; /* Update currentNode to equal the nextNode (remember nextNode is the currentNode's next position)*/
+        }
+
+        list->head = prevNode;
+    }
+    else
+    {
+        printf("> Error: Cannot reverse an empty list\n");
+    }
 }
 
 void commandSave(TelephoneBookList * list, char * fileName)
 {
+    TelephoneBookNode * node = list->head;
+    FILE *fp = fopen(fileName, "w+");
 
+    while(fputs(node->name, fp))
+    {
+        printf("Test\n");
+        node = node->nextNode;
+    }
+    fclose(fp);
 }
 
 void commandSortName(TelephoneBookList * list)
@@ -247,17 +291,17 @@ int changingSerialSize(int largeSerial, int i)
 {
     int serialSpace; 
 
-    if(i < 10) /*Checks each value - If the value is a single, double or triple digit, minus 0, 1 or 2 respectively from the size*/
+    if(i < SMALLSERIALSIZE) /*Checks each value - If the value is a single, double or triple digit, minus 0, 1 or 2 respectively from the size*/
     {
         serialSpace = largeSerial;
     }
-    else if(i >= 10 && i <= 99)
+    else if(i >= SMALLSERIALSIZE && i <= MEDIUMSERIALSIZE)
     {
-        serialSpace = largeSerial - 1;
+        serialSpace = largeSerial - CLEARONECHAR;
     }
-    else if(i > 99 && i < 999)
+    else if(i > MEDIUMSERIALSIZE && i < LARGESERIALSIZE)
     {
-        serialSpace = largeSerial - 2;
+        serialSpace = largeSerial - CLEARTWOCHAR;
     }
     return serialSpace;
 }
@@ -286,11 +330,11 @@ int changingIDSize(int largeID, int id)
     
     if(id < 1000)
     {
-        idSpace = largeID - 1;
+        idSpace = largeID - CLEARONECHAR;
     }
     else if(id  >= 1000)
     {
-        idSpace = largeID - 2;
+        idSpace = largeID - CLEARTWOCHAR;
     }
     
     return idSpace;
@@ -302,11 +346,11 @@ int finalEntries(int listSize)
 
     if(listSize < 10)
     {
-        totalSpace = totalSpace - 1;
+        totalSpace = totalSpace - CLEARONECHAR;
     }
     else if(listSize >= 10 && listSize < 100)
     {
-        totalSpace = totalSpace - 2;
+        totalSpace = totalSpace - CLEARTWOCHAR;
     }
     else if(listSize >= 100 && listSize < 1000)
     {
