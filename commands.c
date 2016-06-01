@@ -1,3 +1,4 @@
+/* Author: James McLennan / s3543182 2016 RMIT*/
 #include "commands.h"
 
 TelephoneBookList * commandLoad(char * fileName)
@@ -9,7 +10,7 @@ TelephoneBookList * commandLoad(char * fileName)
     TelephoneBookNode * node;
     FILE *fp = fopen(fileName, "r"); /*Open the file requested from the user.*/
     
-    if(fp == NULL)
+    if(fp == NULL) /*File does not exist */
     {
         printf("> Error: Unable to find the specified file.\n");
         return NULL;
@@ -18,7 +19,7 @@ TelephoneBookList * commandLoad(char * fileName)
     else
     {
         printf("> Loading the file...\n");
-        telephonebooklist = createTelephoneBookList();
+        telephonebooklist = createTelephoneBookList(); /*Create list*/
         
         while(fgets(text, MAX, fp)) /*While there is text to read in the file called from fopen()*/ 
         {
@@ -29,32 +30,25 @@ TelephoneBookList * commandLoad(char * fileName)
                 token = strtok(text, DELIMS);
                 while(token != NULL)
                 {
-                    node = createTelephoneBookNode();
+                    node = createTelephoneBookNode(); /*Create node*/
                     
-                    number = strtol(token, &token, 0);
+                    number = strtol(token, &token, 0); /*First token after load = ID*/
                     node->id = number;
                     token = strtok(NULL, DELIMS);
                     
-                    strcpy(node->name, token);
-                    if(strlen(node->name) > NAME_LENGTH)
-                    {
-                        printf("Fail\n");
-                        commandUnload(telephonebooklist);
-                        telephonebooklist = NULL;
-                        return telephonebooklist;
-                    }
+                    strcpy(node->name, token); /* Second token after load = Name*/
                     token = strtok(NULL, DELIMS);
                     
-                    strcpy(node->telephone, token);
+                    strcpy(node->telephone, token); /* Third token after load = Telephone number*/
 
-                    insert(telephonebooklist, node);
+                    insert(telephonebooklist, node); /* Insert the node*/
                     token = strtok(NULL, DELIMS);
                 }
             }
         }
         
         printf("> %d phone book entries have been loaded from the file.\n", telephonebooklist->size);
-        fclose(fp);
+        fclose(fp); /* Close the file*/
         printf("> Closing the file.\n");
         return telephonebooklist;
     }
@@ -66,8 +60,8 @@ void commandUnload(TelephoneBookList * list)
    if(list != NULL)
    {
        TelephoneBookNode * node = list->head;
-       freeTelephoneBookNode(node);
-       freeTelephoneBookList(list);
+       freeTelephoneBookNode(node);/*Free every node*/
+       freeTelephoneBookList(list);/* Free the list*/
    }
 }
 
@@ -84,10 +78,10 @@ void commandDisplay(TelephoneBookList * list)
 
     if(list->size == EMPTYLIST) /* User attempts to display an empty list*/
     {
-        largeName = EMPTYLIST;
+        largeName = EMPTYNAMESIZE;
         largeSerial = EMPTYLIST;
         largeID = EMPTYLIST;
-        totalEntries = EMPTYLIST;
+        totalEntries = EMPTYTOTALSIZE;
     }
     else
     {
@@ -107,7 +101,7 @@ void commandDisplay(TelephoneBookList * list)
 
     if(list->size == EMPTYLIST) /* If empty list - print blank list*/
     {
-        printf("%s %44s\n", SUBBREAK, SUBBREAK);       
+        printf("%s %43s\n", SUBBREAK, SUBBREAK);       
     }
     else
     {
@@ -140,7 +134,7 @@ void commandDisplay(TelephoneBookList * list)
 
 void commandForward(TelephoneBookList * list, int moves)
 {
-    if(forward(list, moves) == FALSE)
+    if(forward(list, moves) == FALSE) /*If forward fails*/
     {
         printf("> Unable to move %d nodes forward\n", moves);
     }
@@ -148,7 +142,7 @@ void commandForward(TelephoneBookList * list, int moves)
 
 void commandBackward(TelephoneBookList * list, int moves)
 {
-    if(backward(list, moves) == FALSE)
+    if(backward(list, moves) == FALSE) /*If backward fails*/
     {
         printf("> Unable to move %d nodes backward\n", moves);
     }
@@ -158,10 +152,6 @@ void commandInsert(TelephoneBookList * list, int id, char * name, char * telepho
 {
     TelephoneBookNode * telephonebooknode; 
     telephonebooknode = createTelephoneBookNode(); /*Create a node*/
-    if(list == NULL)
-    {
-        list = createTelephoneBookList();
-    }
     if(id > LOWESTID && id < FOURDIGITID)
     {
         if(findByID(list, id) == NULL)
@@ -197,7 +187,7 @@ void commandFind(TelephoneBookList * list, char * name)
 {
    if(list != NULL)
    {
-       if(strlen(name) <= NAME_LENGTH)
+       if(strlen(name) <= NAME_LENGTH) /* If the name is less the the maximum name length*/
        {
            if(findByName(list, name) == NULL)
            {
@@ -217,13 +207,13 @@ void commandFind(TelephoneBookList * list, char * name)
 
 void commandDelete(TelephoneBookList * list)
 {
-    if(list->size == CLEARONECHAR)
+    if(list->size == CLEARONECHAR) /*If the list is equal than 1*/
     {
-        commandUnload(list);
+        commandUnload(list); /* Unload the list*/
     }
     else
     {
-        delete(list);    
+        delete(list); /* Else delete */
     }
 }
 
@@ -255,23 +245,23 @@ void commandReverse(TelephoneBookList * list)
 void commandSave(TelephoneBookList * list, char * fileName)
 {
     TelephoneBookNode * node = list->head;
-    FILE *fp = fopen(fileName, "w+");
+    FILE *fp = fopen(fileName, "w+"); /*Open the file in a write mode*/
     
     char name[MAX];
     char telephone[MAX];
     while(node != NULL)
     {
-        fprintf(fp, "%d, ", node->id);
+        fprintf(fp, "%d, ", node->id); /*Write the id to the file*/
         
         strcpy(name, node->name);
-        fprintf(fp, "%s, ", name);
+        fprintf(fp, "%s, ", name); /*Write the name to the file*/
 
         strcpy(telephone, node->telephone);
-        fprintf(fp, "%s\n", telephone);
+        fprintf(fp, "%s\n", telephone); /*Write the telephone to the file*/
         
-        node = node->nextNode;
+        node = node->nextNode; /*Go to the next node*/
     }
-    fclose(fp);
+    fclose(fp); /*Close the file*/
 }
 
 void commandSortName(TelephoneBookList * list)
@@ -284,7 +274,7 @@ void commandSortRandom(TelephoneBookList * list)
     printf("Test\n");
 }
 
-int largestName(TelephoneBookList * list)
+int largestName(TelephoneBookList * list) /*Find the largest Node name*/
 {
     TelephoneBookNode * node = list->head;
 
@@ -292,25 +282,25 @@ int largestName(TelephoneBookList * list)
     
     while(node != NULL)
     {
-        x = strlen(node->name);
+        x = strlen(node->name); /* Assign X to the size of the name*/
         if(largeX < x)
         {
-            largeX = x;
+            largeX = x; /*Assign largeX to the largest X*/
         }
-        node = node->nextNode;
+        node = node->nextNode; /* Next node*/
      }
     return largeX;
 }
 
-int changingNameSize(char * name, int largeID)
+int changingNameSize(char * name, int largeID) /*change the name size for each, depending on the largest name*/
 {
-    int nameSize = strlen(name);
+    int nameSize = strlen(name); 
 
-    while(nameSize <= largeID)
+    while(nameSize <= largeID) /* if the nameSize is <= the largest name size*/
     {
         nameSize++;
     }
-    return nameSize - strlen(name);
+    return nameSize - strlen(name); /*Return the size, minus its length*/
 }
 int changingSerialSize(int largeSerial, int i)
 {
@@ -318,15 +308,15 @@ int changingSerialSize(int largeSerial, int i)
 
     if(i < SMALLSERIALSIZE) /*Checks each value - If the value is a single, double or triple digit, minus 0, 1 or 2 respectively from the size*/
     {
-        serialSpace = largeSerial;
+        serialSpace = largeSerial; /*The size needed is the size of the large serial*/
     }
-    else if(i >= SMALLSERIALSIZE && i <= MEDIUMSERIALSIZE)
+    else if(i >= SMALLSERIALSIZE && i <= MEDIUMSERIALSIZE) 
     {
-        serialSpace = largeSerial - CLEARONECHAR;
+        serialSpace = largeSerial - CLEARONECHAR; /*Return the space needed for the serial size, minus a char given it is 2 chars wide */
     }
     else if(i > MEDIUMSERIALSIZE && i < LARGESERIALSIZE)
     {
-        serialSpace = largeSerial - CLEARTWOCHAR;
+        serialSpace = largeSerial - CLEARTWOCHAR; /*Return the space needed for the serial size, minus two chars given it is 3 chars wide */
     }
     return serialSpace;
 }
@@ -386,17 +376,17 @@ int finalEntries(int listSize)
 {
     int totalSpace = 16;
 
-    if(listSize < 10)
+    if(listSize < SINGLEDIGITID) /* if the list size is less than 10*/
     {
-        totalSpace = totalSpace - CLEARONECHAR;
+        totalSpace = totalSpace - CLEARONECHAR; /*Total space needed is 15 chars*/
     }
-    else if(listSize >= 10 && listSize < 100)
+    else if(listSize >= SINGLEDIGITID && listSize < DOUBLEDIGITID)
     {
-        totalSpace = totalSpace - CLEARTWOCHAR;
+        totalSpace = totalSpace - CLEARTWOCHAR; /*if the list is between 10 and 100 total space needed is 14 chars*/
     }
-    else if(listSize >= 100 && listSize < 1000)
+    else if(listSize >= DOUBLEDIGITID && listSize < TRIPLEDIGITID)
     {
-        totalSpace = totalSpace - 3;
+        totalSpace = totalSpace - CLEARTHREECHAR; /*If the list is between 100 and 1000 total space needed is 13 chars*/
     }
     
     return totalSpace;
