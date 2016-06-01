@@ -1,3 +1,4 @@
+/* Author: James McLennan / s3543182 2016 RMIT*/
 #ifndef ADDRESSBOOK_LIST_H
 #define ADDRESSBOOK_LIST_H
 
@@ -6,8 +7,8 @@
 #define NAME_LENGTH (20 + NULL_SPACE)
 #define TELEPHONE_LENGTH (10 + NULL_SPACE)
 
-#define NODE_MINIMUM_ID 1
-#define MAXID 9999
+#define NODE_MINIMUM_ID 1 /* Minimum ID size*/
+#define MAXID 9999 /*Maximum ID size*/
 
 typedef struct telephoneBookNode
 {
